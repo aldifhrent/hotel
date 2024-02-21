@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @unique @default(uuid())
+  no           Int      @id @default(autoincrement())
+  nama         String
+  jenisKelamin String
+  nomorKtp     String
+  tipeKamar    String
+  harga        Decimal
+  tanggalPesan DateTime
+  durasi       Int
+  diskon       Int
+  isBreakfast  Boolean
+  totalHarga   Decimal
+  createAt     DateTime @default(now())
+  updateAt     DateTime @updatedAt
+}
