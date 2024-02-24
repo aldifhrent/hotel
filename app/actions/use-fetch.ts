@@ -16,6 +16,6 @@ export const useFetch = () => {
       }
     },
     queryKey: ['fetch'],
-    refetchInterval: 5000,
+    refetchInterval: 3000,
   });
 };

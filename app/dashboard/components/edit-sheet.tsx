@@ -1,21 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { UserSchema } from "@/lib/schema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -32,9 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useRouter } from "next/navigation";
-import { useEdit, useFetchId } from "@/app/actions";
+import { useEdit } from "@/app/actions";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {
@@ -49,20 +38,47 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { tipeKamarData } from "@/lib/data-hotel";
+import { axiosInstance } from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
-interface editSheetProps {
+interface editProps {
   id: string;
 }
-
-const EditSheet = ({ id }: editSheetProps) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const route = useRouter();
+const EditForm = ({ id }: editProps) => {
+  const { mutate: editData } = useEdit();
+  const router = useRouter();
+  async function fetchDataId(id: string) {
+    try {
+      const response = await axiosInstance.get(`/api/customers/${id}`);
+      if (response) {
+        form.setValue("nama", response.data.nama);
+        form.setValue("jenisKelamin", response.data.jenisKelamin);
+        form.setValue("nomorKtp", response.data.nomorKtp);
+        form.setValue("tipeKamar", response.data.tipeKamar);
+        form.setValue("harga", parseInt(response.data.harga));
+        form.setValue("tanggalPesan", new Date(response.data.tanggalPesan));
+        form.setValue("durasi", response.data.durasi);
+        form.setValue("isBreakfast", response.data.isBreakfast);
+        form.setValue("totalHarga", parseInt(response.data.totalHarga));
+      }
+      setHargaKamar(parseInt(response.data.harga))
+      setDate(new Date(response.data.tanggalPesan));
+      setDuration(response.data.durasi);
+      setTotalHarga(parseInt(response.data.totalHarga));
+    } catch (error) {
+      toast.error("Error Fetching");
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    fetchDataId(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
   const [date, setDate] = useState<Date>();
-  const { mutateAsync: editDashboard } = useEdit();
-  const { mutateAsync: fetchDataById } = useFetchId();
 
   const [hargaKamar, setHargaKamar] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
+
   const form = useForm({
     resolver: zodResolver(UserSchema),
     defaultValues: {
@@ -75,29 +91,9 @@ const EditSheet = ({ id }: editSheetProps) => {
       durasi: 1,
       diskon: 0,
       isBreakfast: false,
-      totalHarga: "",
+      totalHarga: 0,
     },
   });
-  async function fetchData(id: string) {
-    try {
-      const response = await fetchDataById(id);
-
-      if (response) {
-        form.setValue("nama", response.nama);
-        form.setValue("jenisKelamin", response.jenisKelamin);
-        form.setValue("tipeKamar", response.tipeKamar);
-        form.setValue("harga", response.harga.toNumber());
-        form.setValue("nomorKtp", response.nomorKtp);
-        form.setValue("tanggalPesan", response.tanggalPesan);
-        form.setValue("durasi", response.durasi);
-        form.setValue("isBreakfast", response.isBreakfast);
-        form.setValue("totalHarga", response.totalHarga.toString());
-      }
-    } catch (error) {
-      toast.error("Error Fetching");
-      console.log(error);
-    }
-  }
 
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
@@ -116,16 +112,15 @@ const EditSheet = ({ id }: editSheetProps) => {
       form.setValue("diskon", disc);
     }
 
-    const isBreakfast = form.getValues("isBreakfast");
+    const isBreakfast = form.getValues("isBreakfast")
 
     if (isBreakfast) {
       price = price + breakfastPrice;
     }
 
-    setTotalHarga(price);
-    form.setValue("totalHarga", price.toString());
+    form.setValue("totalHarga", price);
   };
-  // Updated code by Umar is start from here
+
   const breakfastPrice = 80000;
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
@@ -158,7 +153,8 @@ const EditSheet = ({ id }: editSheetProps) => {
     }
 
     setTotalHarga(price);
-    form.setValue("totalHarga", price.toString());
+    form.setValue("totalHarga", price);
+    console.log(form.setValue("totalHarga", price));
   };
 
   /**
@@ -170,14 +166,13 @@ const EditSheet = ({ id }: editSheetProps) => {
   const handleBreakfastChange = (status: CheckedState) => {
     if (status) {
       setTotalHarga(totalHarga + breakfastPrice);
-      form.setValue("totalHarga", (totalHarga + breakfastPrice).toString());
+      form.setValue("totalHarga", totalHarga + breakfastPrice);
     } else {
       setTotalHarga(totalHarga - breakfastPrice);
-      form.setValue("totalHarga", (totalHarga - breakfastPrice).toString());
+      form.setValue("totalHarga", totalHarga - breakfastPrice);
     }
   };
 
-  const timeoutRef = useRef<NodeJS.Timeout>();
   /**
    * Handles the change in duration input, calculates the price, applies discount if applicable,
    * and updates the total price including breakfast if selected.
@@ -185,11 +180,11 @@ const EditSheet = ({ id }: editSheetProps) => {
    * @param {ChangeEvent<HTMLInputElement>} e - the event object containing the input element
    * @return {void}
    */
-  const [duration, setDuration] = useState("0");
+  const [duration, setDuration] = useState<number>(0);
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
     var targetValue = parseInt(target.value || "0", 10); // Parse value as an integer
-    setDuration(targetValue.toString());
+    setDuration(targetValue);
     form.setValue("durasi", targetValue);
 
     let val = parseInt(target.value || "1", 10); // Parse value as an integer
@@ -204,62 +199,28 @@ const EditSheet = ({ id }: editSheetProps) => {
       form.setValue("diskon", disc);
     }
 
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      if (targetValue < 1) {
-        console.log("less than 1");
-        form.setValue("durasi", val);
-        setDuration(val.toString());
-      }
-    }, 3000);
-
     // Check for breakfast
     const isBreakfast = form.getValues("isBreakfast");
     if (isBreakfast) {
       setTotalHarga(price + breakfastPrice);
-      form.setValue("totalHarga", (price + breakfastPrice).toString());
+      form.setValue("totalHarga", price + breakfastPrice);
     } else {
       setTotalHarga(price);
-      form.setValue("totalHarga", price.toString());
+      form.setValue("totalHarga", price);
     }
   };
 
-  useEffect(() => {
-    fetchData(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
   async function onSubmit(values: z.infer<typeof UserSchema>) {
     try {
-      const totalHarga = parseFloat(values.totalHarga); // Parse totalHarga as a number
-      if (isNaN(totalHarga)) {
-        throw new Error("Invalid totalHarga"); // Handle invalid totalHarga if necessary
-      }
-
-      // Ensure totalHarga is a number in the values object
-      const updatedValues = { ...values, totalHarga };
-      //   await editDashboard({ id: id, body: updatedValues });
-      toast.success("Edit Success");
-      route.refresh();
+      await editData({ id: id, body: values });
+      toast.success("Sucessfully edit");
+      router.back();
     } catch (error) {
-      toast.error("Error");
       console.log(error);
     }
   }
-
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline">Edit</Button>
-      </SheetTrigger>
-      <SheetContent >
-        <ScrollArea>
-          <SheetHeader className="mb-4">
-            <SheetTitle>Edit Customer</SheetTitle>
-          </SheetHeader>
-          <Form {...form}>
+    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
@@ -306,11 +267,7 @@ const EditSheet = ({ id }: editSheetProps) => {
             <FormItem>
               <FormLabel>Nomor Identitas</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Nomor Identitas"
-                  {...field}
-                  disabled={loading}
-                />
+                <Input placeholder="Nomor Identitas" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -327,6 +284,7 @@ const EditSheet = ({ id }: editSheetProps) => {
                   handleKamarSelect(value);
                   field.onChange(value);
                 }}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -385,7 +343,13 @@ const EditSheet = ({ id }: editSheetProps) => {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={setDate}
+                      onSelect={(date) => {
+                        // Update the date state directly
+                        console.log("Selected Date:", date);
+                        setDate(date);
+                        // Update the form value for tanggalPesan
+                        form.setValue("tanggalPesan", date as Date);
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
@@ -447,29 +411,18 @@ const EditSheet = ({ id }: editSheetProps) => {
             <FormItem className="flex items-center">
               <FormLabel>Total Harga</FormLabel>
               <FormControl>
-                <Input
-                  value={totalHarga.toString()}
-                  disabled
-                  className="w-72"
-                />
+                <Input value={totalHarga} disabled className="w-72" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex mx-auto items-center text-center gap-x-8">
-          <Button type="button" onClick={handleTotalBayar}>
-            Hitung Total Bayar
-          </Button>
-          <Button type="submit">Register</Button>
-          <Button onClick={() => window.location.reload()}>Cancel</Button>
+          <Button type="submit">Edit</Button>
         </div>
       </form>
     </Form>
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
   );
 };
 
-export default EditSheet;
+export default EditForm;

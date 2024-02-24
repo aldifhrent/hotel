@@ -20,7 +20,7 @@ model User {
   harga        Decimal
   tanggalPesan DateTime
   durasi       Int
-  diskon       Int
+  diskon       Decimal
   isBreakfast  Boolean
   totalHarga   Decimal
   createAt     DateTime @default(now())

@@ -6,7 +6,7 @@ import { User } from "@prisma/client";
 
 export const useEdit = () => {
   return useMutation({
-    mutationFn: async ({ id, body }: { id: string; body: Partial<User> }) => {
+    mutationFn: async ({ id, body }: { id: string; body: any }) => {
       const response = await axiosInstance.patch<User>(
         `/api/customers/${id}`,
         body

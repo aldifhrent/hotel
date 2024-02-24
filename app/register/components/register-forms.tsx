@@ -28,33 +28,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { axiosInstance } from "@/lib/axios";
+import { tipeKamarData } from "@/lib/data-hotel";
 import { UserSchema } from "@/lib/schema";
+import { TipeKamarDataItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckedState } from "@radix-ui/react-checkbox";
-
+import axios from "axios";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-interface TipeKamarDataItem {
-  value: string;
-  label: string;
-  harga: number;
-}
-
 const SignUpForm = () => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [date, setDate] = useState<Date>();
-  const tipeKamarData: TipeKamarDataItem[] = [
-    { value: "standar", label: "Standar", harga: 10000 },
-    { value: "deluxe", label: "Deluxe", harga: 100000 },
-    { value: "luxury", label: "Luxury", harga: 1000000 },
-  ];
 
   const [hargaKamar, setHargaKamar] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
@@ -71,10 +61,10 @@ const SignUpForm = () => {
       durasi: 1,
       diskon: 0,
       isBreakfast: false,
-      totalHarga: "",
+      totalHarga: 0,
     },
   });
-  const { mutateAsync: createCustomer, error: errorCreate } = useCreateUser();
+  const { mutateAsync: createCustomer } = useCreateUser();
 
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
@@ -99,28 +89,8 @@ const SignUpForm = () => {
       price = price + breakfastPrice;
     }
 
-    setTotalHarga(price);
-    form.setValue("totalHarga", price.toString());
+    form.setValue("totalHarga", price);
   };
-
-  async function onSubmit(values: z.infer<typeof UserSchema>) {
-    try {
-      const totalHarga = parseFloat(values.totalHarga); // Parse totalHarga as a number
-      if (isNaN(totalHarga)) {
-        throw new Error("Invalid totalHarga"); // Handle invalid totalHarga if necessary
-      }
-
-      // Ensure totalHarga is a number in the values object
-      const updatedValues = { ...values, totalHarga };
-
-      await createCustomer(updatedValues);
-
-      toast.success("Success Create Customer");
-      window.location.reload();
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   // Updated code by Umar is start from here
   const breakfastPrice = 80000;
@@ -155,7 +125,8 @@ const SignUpForm = () => {
     }
 
     setTotalHarga(price);
-    form.setValue("totalHarga", price.toString());
+    form.setValue("totalHarga", price);
+    console.log(form.setValue("totalHarga", price));
   };
 
   /**
@@ -167,10 +138,10 @@ const SignUpForm = () => {
   const handleBreakfastChange = (status: CheckedState) => {
     if (status) {
       setTotalHarga(totalHarga + breakfastPrice);
-      form.setValue("totalHarga", (totalHarga + breakfastPrice).toString());
+      form.setValue("totalHarga", totalHarga + breakfastPrice);
     } else {
       setTotalHarga(totalHarga - breakfastPrice);
-      form.setValue("totalHarga", (totalHarga - breakfastPrice).toString());
+      form.setValue("totalHarga", totalHarga - breakfastPrice);
     }
   };
 
@@ -181,11 +152,11 @@ const SignUpForm = () => {
    * @param {ChangeEvent<HTMLInputElement>} e - the event object containing the input element
    * @return {void}
    */
-  const [duration, setDuration] = useState("0");
+  const [duration, setDuration] = useState<number>(0);
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
     var targetValue = parseInt(target.value || "0", 10); // Parse value as an integer
-    setDuration(targetValue.toString());
+    setDuration(targetValue);
     form.setValue("durasi", targetValue);
 
     let val = parseInt(target.value || "1", 10); // Parse value as an integer
@@ -204,13 +175,22 @@ const SignUpForm = () => {
     const isBreakfast = form.getValues("isBreakfast");
     if (isBreakfast) {
       setTotalHarga(price + breakfastPrice);
-      form.setValue("totalHarga", (price + breakfastPrice).toString());
+      form.setValue("totalHarga", price + breakfastPrice);
     } else {
       setTotalHarga(price);
-      form.setValue("totalHarga", price.toString());
+      form.setValue("totalHarga", price);
     }
   };
 
+  async function onSubmit(values: z.infer<typeof UserSchema>) {
+    try {
+      await createCustomer(values);
+      console.log(values);
+      toast.success("Sucessfully created");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -259,11 +239,7 @@ const SignUpForm = () => {
             <FormItem>
               <FormLabel>Nomor Identitas</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Nomor Identitas"
-                  {...field}
-                  disabled={loading}
-                />
+                <Input placeholder="Nomor Identitas" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -308,7 +284,7 @@ const SignUpForm = () => {
             <FormItem>
               <FormLabel>Harga</FormLabel>
               <FormControl>
-                <Input type="number" value={hargaKamar.toString()} disabled />
+                <Input value={hargaKamar} disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -331,7 +307,7 @@ const SignUpForm = () => {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      {date ? format(date, "PPPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -357,7 +333,6 @@ const SignUpForm = () => {
                 <FormLabel>Durasi</FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
                     {...field}
                     onChange={(e) => {
                       handleDurationChange(e);
@@ -367,8 +342,8 @@ const SignUpForm = () => {
                   />
                 </FormControl>
                 <FormLabel>Hari</FormLabel>
-                <FormMessage />
               </div>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -397,11 +372,11 @@ const SignUpForm = () => {
           control={form.control}
           name="totalHarga"
           render={() => (
-            <FormItem className="flex items-center">
+            <FormItem className="flex flex-col">
               <FormLabel>Total Harga</FormLabel>
               <FormControl>
                 <Input
-                  value={totalHarga.toString()}
+                  value={totalHarga}
                   disabled
                   className="w-72"
                 />

@@ -8,7 +8,13 @@ const Hotel = () => {
       <div className="flex gap-x-4 w-full mt-2 p-12 items-center justify-center">
         {HotelData.map((hotel) => {
           return (
-            <CardHotel key={hotel.name} name={hotel.name} image={hotel.image} />
+            <CardHotel
+              key={hotel.name}
+              name={hotel.name}
+              image={hotel.image}
+              description={hotel.description}
+              price={hotel.price}
+            />
           );
         })}
       </div>

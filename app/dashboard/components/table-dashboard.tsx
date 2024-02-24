@@ -8,13 +8,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@prisma/client";
-import EditSheet from "./edit-sheet";
 import moment from "moment";
+import { UserProps } from "@/lib/types";
+import Link from "next/link";
 
-interface UserProps {
-  user: User[];
-  handleDelete: (id: string) => void;
-}
 const TableDashboard = ({ user, handleDelete }: UserProps) => {
   return (
     <Table className="mt-12">
@@ -53,16 +50,18 @@ const TableDashboard = ({ user, handleDelete }: UserProps) => {
             </TableCell>
             <TableCell className="font-medium">{value.durasi}</TableCell>
             <TableCell className="font-medium">
-              {value.diskon ? "10%" : "0"}
+              {value.diskon.toString()}
             </TableCell>
             <TableCell className="font-medium w-fit">
-              {value.isBreakfast ? "Include" : "No Include"}
+              {value.isBreakfast ? 80000 : "No Include"}
             </TableCell>
             <TableCell className="font-medium w-fit">
               {value.totalHarga.toString()}
             </TableCell>
             <TableCell className="flex gap-x-2">
-              <EditSheet id={value.id} />
+              <Link href={`/dashboard/${value.id}`}>
+                <Button>Edit</Button>
+              </Link>
               <Button
                 onClick={() => handleDelete(value.id)}
                 variant="destructive"
