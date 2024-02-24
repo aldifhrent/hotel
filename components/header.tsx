@@ -17,15 +17,20 @@ const Header = () => {
       label: "Home",
       active: pathname === `/`,
     },
+    {
+      href: `/dashboard`,
+      label: "Dashboard",
+      active: pathname === `/dashboard`,
+    },
   ];
   const handleNav = () => {
     setNav(!nav);
   };
   return (
-    <header className="p-6">
+    <header className="p-6 bg-slate-300">
       <div className="flex justify-between text-center items-center">
         <div className="p-2">
-          <Image src="/blogger.png" alt="Logo" width={40} height={40} />
+          <h1 className="font-bold text-xl bg-black text-white p-1">Serkom</h1>
         </div>
         <nav className="hidden lg:flex gap-4 items-center text-center justify-center">
           {routes.map((route) => (
@@ -34,7 +39,7 @@ const Header = () => {
               href={route.href}
               className={
                 (cn(
-                  " text-sm font-medium transition-colors hover:text-primary"
+                  " text-sm font-bold transition-colors hover:text-primary"
                 ),
                 route.active
                   ? "text-black dark:text-white"
@@ -44,16 +49,7 @@ const Header = () => {
               {route.label}
             </Link>
           ))}
-          <Search />
         </nav>
-        {/* Mobile Menu */}
-        <div className="inline-block ml-auto lg:hidden">
-          {/* {nav ? (
-            <AiOutlineClose onClick={() => handleNav()} />
-          ) : (
-            <AiOutlineMenu onClick={() => handleNav()} />
-          )} */}
-        </div>
       </div>
       <nav
         className={

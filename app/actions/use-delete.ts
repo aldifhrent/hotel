@@ -3,6 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 import { User } from "@prisma/client";
+
+// Function for delete data customer
 export const useDelete = () => {
   return useMutation({
     mutationFn: async (id: string) => {

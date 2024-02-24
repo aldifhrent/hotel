@@ -28,17 +28,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { axiosInstance } from "@/lib/axios";
 import { tipeKamarData } from "@/lib/data-hotel";
 import { UserSchema } from "@/lib/schema";
-import { TipeKamarDataItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import axios from "axios";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -65,7 +63,7 @@ const SignUpForm = () => {
     },
   });
   const { mutateAsync: createCustomer } = useCreateUser();
-
+  const route = useRouter();
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
     const selected = tipeKamarData.find((item) => {
@@ -92,17 +90,11 @@ const SignUpForm = () => {
     form.setValue("totalHarga", price);
   };
 
-  // Updated code by Umar is start from here
   const breakfastPrice = 80000;
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
 
-  /**
-   * Handle the selection of a room.
-   *
-   * @param {string} val - The value of the selected room
-   * @return {void}
-   */
+  // Handle When User Selected Tipe Kamar
   const handleKamarSelect = (val: string) => {
     const selected = tipeKamarData.find((item) => {
       return item.value === val;
@@ -123,18 +115,10 @@ const SignUpForm = () => {
       price = price - disc;
       form.setValue("diskon", disc);
     }
-
-    setTotalHarga(price);
-    form.setValue("totalHarga", price);
-    console.log(form.setValue("totalHarga", price));
   };
 
-  /**
-   * A function that handles the change in breakfast status.
-   *
-   * @param {CheckedState} status - the status of the breakfast
-   * @return {void}
-   */
+  // function that handles the change in breakfast status.
+
   const handleBreakfastChange = (status: CheckedState) => {
     if (status) {
       setTotalHarga(totalHarga + breakfastPrice);
@@ -145,13 +129,9 @@ const SignUpForm = () => {
     }
   };
 
-  /**
-   * Handles the change in duration input, calculates the price, applies discount if applicable,
-   * and updates the total price including breakfast if selected.
-   *
-   * @param {ChangeEvent<HTMLInputElement>} e - the event object containing the input element
-   * @return {void}
-   */
+  //Handles the change in duration input, calculates the price, applies discount if applicable,
+  //and updates the total price including breakfast if selected.
+
   const [duration, setDuration] = useState<number>(0);
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
@@ -185,8 +165,12 @@ const SignUpForm = () => {
   async function onSubmit(values: z.infer<typeof UserSchema>) {
     try {
       await createCustomer(values);
-      console.log(values);
-      toast.success("Sucessfully created");
+      
+      setTimeout(() => {
+        toast.success("Sucessfully created");
+
+        route.push('/dashboard')
+      }, 5000)
     } catch (error) {
       console.log(error);
     }
@@ -375,11 +359,7 @@ const SignUpForm = () => {
             <FormItem className="flex flex-col">
               <FormLabel>Total Harga</FormLabel>
               <FormControl>
-                <Input
-                  value={totalHarga}
-                  disabled
-                  className="w-72"
-                />
+                <Input value={totalHarga} disabled className="w-72" />
               </FormControl>
               <FormMessage />
             </FormItem>

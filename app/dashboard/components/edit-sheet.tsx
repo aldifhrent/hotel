@@ -61,10 +61,11 @@ const EditForm = ({ id }: editProps) => {
         form.setValue("isBreakfast", response.data.isBreakfast);
         form.setValue("totalHarga", parseInt(response.data.totalHarga));
       }
-      setHargaKamar(parseInt(response.data.harga))
+      setHargaKamar(parseInt(response.data.harga));
       setDate(new Date(response.data.tanggalPesan));
       setDuration(response.data.durasi);
       setTotalHarga(parseInt(response.data.totalHarga));
+      setJenisKelamin(response.data.jenisKelamin);
     } catch (error) {
       toast.error("Error Fetching");
       console.log(error);
@@ -75,10 +76,9 @@ const EditForm = ({ id }: editProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   const [date, setDate] = useState<Date>();
-
   const [hargaKamar, setHargaKamar] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
-
+  const [jenisKelamin, setJenisKelamin] = useState("");
   const form = useForm({
     resolver: zodResolver(UserSchema),
     defaultValues: {
@@ -112,7 +112,7 @@ const EditForm = ({ id }: editProps) => {
       form.setValue("diskon", disc);
     }
 
-    const isBreakfast = form.getValues("isBreakfast")
+    const isBreakfast = form.getValues("isBreakfast");
 
     if (isBreakfast) {
       price = price + breakfastPrice;
@@ -125,12 +125,7 @@ const EditForm = ({ id }: editProps) => {
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
 
-  /**
-   * Handle the selection of a room.
-   *
-   * @param {string} val - The value of the selected room
-   * @return {void}
-   */
+  // Handle the selection of a room.
   const handleKamarSelect = (val: string) => {
     const selected = tipeKamarData.find((item) => {
       return item.value === val;
@@ -154,32 +149,35 @@ const EditForm = ({ id }: editProps) => {
 
     setTotalHarga(price);
     form.setValue("totalHarga", price);
-    console.log(form.setValue("totalHarga", price));
   };
 
-  /**
-   * A function that handles the change in breakfast status.
-   *
-   * @param {CheckedState} status - the status of the breakfast
-   * @return {void}
-   */
+  // A function that handles the change in breakfast status.
   const handleBreakfastChange = (status: CheckedState) => {
-    if (status) {
-      setTotalHarga(totalHarga + breakfastPrice);
-      form.setValue("totalHarga", totalHarga + breakfastPrice);
-    } else {
-      setTotalHarga(totalHarga - breakfastPrice);
-      form.setValue("totalHarga", totalHarga - breakfastPrice);
+    const isBreakfast = status;
+
+    // Calculate price without breakfast
+    let price = hargaKamar * duration;
+
+    // Apply discount if applicable
+    if (duration > discDurAtLeastMoreThan) {
+      const disc = price * discountRate;
+      price = price - disc;
+      form.setValue("diskon", disc); // Update diskon value in form state
     }
+
+    // Update totalHarga based on new breakfast status
+    if (isBreakfast) {
+      price = price + breakfastPrice; // Add breakfast price
+    }
+
+    // Update totalHarga in form state
+    setTotalHarga(price);
+    form.setValue("totalHarga", price);
   };
 
-  /**
-   * Handles the change in duration input, calculates the price, applies discount if applicable,
-   * and updates the total price including breakfast if selected.
-   *
-   * @param {ChangeEvent<HTMLInputElement>} e - the event object containing the input element
-   * @return {void}
-   */
+  //Handles the change in duration input, calculates the price, applies discount if applicable,
+  //and updates the total price including breakfast if selected
+
   const [duration, setDuration] = useState<number>(0);
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
@@ -192,22 +190,31 @@ const EditForm = ({ id }: editProps) => {
       val = 1;
     }
 
+    // Store the current diskon value before updating duration
+    const currentDiskon = form.getValues("diskon");
+
+    // Calculate price without considering breakfast
     let price = hargaKamar * val;
+
+    // Check if duration is more than 3 days to apply discount
     if (val > discDurAtLeastMoreThan) {
       const disc = price * discountRate;
       price = price - disc;
-      form.setValue("diskon", disc);
+      form.setValue("diskon", disc); // Update diskon value in form state
+    } else {
+      // Set diskon to the previous value if duration is 3 days or less
+      form.setValue("diskon", currentDiskon);
     }
 
     // Check for breakfast
     const isBreakfast = form.getValues("isBreakfast");
     if (isBreakfast) {
-      setTotalHarga(price + breakfastPrice);
-      form.setValue("totalHarga", price + breakfastPrice);
-    } else {
-      setTotalHarga(price);
-      form.setValue("totalHarga", price);
+      price += breakfastPrice;
     }
+
+    // Update totalHarga in form state
+    setTotalHarga(price);
+    form.setValue("totalHarga", price);
   };
 
   async function onSubmit(values: z.infer<typeof UserSchema>) {
@@ -245,6 +252,7 @@ const EditForm = ({ id }: editProps) => {
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  value={jenisKelamin}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="Laki-laki" id="jenis-laki" />
@@ -309,7 +317,7 @@ const EditForm = ({ id }: editProps) => {
         <FormField
           control={form.control}
           name="harga"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Harga</FormLabel>
               <FormControl>
@@ -418,9 +426,13 @@ const EditForm = ({ id }: editProps) => {
           )}
         />
         <div className="flex mx-auto items-center text-center gap-x-8">
+        <Button type="button" onClick={handleTotalBayar}>Hitung Total Bayar</Button>
           <Button type="submit">Edit</Button>
+          <Button type="button" onClick={() => router.back()}>Cancel</Button>
         </div>
+
       </form>
+
     </Form>
   );
 };

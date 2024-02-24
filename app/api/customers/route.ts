@@ -1,6 +1,7 @@
 import prismaService from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
+// Api for get data customer
 export const GET = async () => {
   try {
     const data = await prismaService.user.findMany({});
@@ -11,6 +12,7 @@ export const GET = async () => {
   }
 };
 
+// Api for create data customer
 export const POST = async (req: NextRequest, res: NextResponse) => {
   try {
     const body = await req.json();

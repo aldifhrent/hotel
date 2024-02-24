@@ -4,6 +4,7 @@ import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 import { User } from "@prisma/client";
 
+// Function to fetch data from api by id
 export const useFetchId = () => {
   return useMutation({
     mutationFn: async (id: string) => {

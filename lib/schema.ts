@@ -22,6 +22,8 @@ export const UserSchema = z.object({
   durasi: z.number({
     required_error: "Durasi is required",
     invalid_type_error: "Durasi must be a number",
+  }).min(1, {
+    message: "Durasi must be at least 1"
   }),
   diskon: z.number(),
   isBreakfast: z.boolean(),
