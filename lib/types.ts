@@ -28,3 +28,9 @@ export interface CardProps {
   data: string;
   title: string;
 }
+
+export interface TipeKamarDataItem {
+  value: string;
+  label: string;
+  harga: number;
+}

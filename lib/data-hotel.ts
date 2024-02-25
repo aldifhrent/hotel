@@ -1,3 +1,5 @@
+import { TipeKamarDataItem } from "./types";
+
 export const HotelData = [
   {
     name: "Standard Room",
@@ -19,11 +21,6 @@ export const HotelData = [
     price: 5000000,
   },
 ];
-interface TipeKamarDataItem {
-  value: string;
-  label: string;
-  harga: number;
-}
 
 export const tipeKamarData: TipeKamarDataItem[] = [
   { value: "Standar", label: "Standar", harga: 200000 },
