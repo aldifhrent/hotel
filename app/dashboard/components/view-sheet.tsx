@@ -44,7 +44,7 @@ import { useRouter } from "next/navigation";
 interface editProps {
   id: string;
 }
-const EditForm = ({ id }: editProps) => {
+const ViewSheet = ({ id }: editProps) => {
   const { mutate: editData } = useEdit();
   const router = useRouter();
   // Fetch data by id
@@ -95,128 +95,21 @@ const EditForm = ({ id }: editProps) => {
     },
   });
   // Total Bayar
-  const handleTotalBayar = () => {
-    const tipeKamar = form.getValues("tipeKamar");
-    const selected = tipeKamarData.find((item) => {
-      return item.value === tipeKamar;
-    });
-
-    // Set selected room
-    const harga = selected?.harga || 0;
-
-    const duration = form.getValues("durasi") || 0;
-    let price = harga * duration;
-    if (duration > discDurAtLeastMoreThan) {
-      const disc = price * discountRate;
-      price = price - disc;
-      form.setValue("diskon", disc);
-    }
-
-    const isBreakfast = form.getValues("isBreakfast");
-
-    if (isBreakfast) {
-      price = price + breakfastPrice;
-    }
-
-    form.setValue("totalHarga", price);
-  };
 
   const breakfastPrice = 80000;
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
 
   // Handle the selection of a room.
-  const handleKamarSelect = (val: string) => {
-    const selected = tipeKamarData.find((item) => {
-      return item.value === val;
-    });
-
-    // Set selected room
-    const harga = selected?.harga || 0;
-
-    // set room price
-    setHargaKamar(harga);
-    form.setValue("harga", harga);
-
-    // Set totalHarga
-    const duration = form.getValues("durasi") || 0;
-    let price = harga * duration;
-    if (duration > discDurAtLeastMoreThan) {
-      const disc = price * discountRate;
-      price = price - disc;
-      form.setValue("diskon", disc);
-    }
-
-    setTotalHarga(price);
-    form.setValue("totalHarga", price);
-  };
 
   // A function that handles the change in breakfast status.
-  const handleBreakfastChange = (status: CheckedState) => {
-    const isBreakfast = status;
 
-    // Calculate price without breakfast
-    let price = hargaKamar * duration;
-
-    // Apply discount if applicable
-    if (duration > discDurAtLeastMoreThan) {
-      const disc = price * discountRate;
-      price = price - disc;
-      form.setValue("diskon", disc); // Update diskon value in form state
-    }
-
-    // Update totalHarga based on new breakfast status
-    if (isBreakfast) {
-      price = price + breakfastPrice; // Add breakfast price
-    }
-
-    // Update totalHarga in form state
-    setTotalHarga(price);
-    form.setValue("totalHarga", price);
-  };
 
   //Handles the change in duration input, calculates the price, applies discount if applicable,
   //and updates the total price including breakfast if selected
 
   const [duration, setDuration] = useState<number>(0);
-  const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
-    var target = e.target;
-    var targetValue = parseInt(target.value || "0", 10); // Parse value as an integer
-    setDuration(targetValue);
-    form.setValue("durasi", targetValue);
-
-    let val = parseInt(target.value || "1", 10); // Parse value as an integer
-    if (val < 1) {
-      val = 1;
-    }
-
-    // Store the current diskon value before updating duration
-    const currentDiskon = form.getValues("diskon");
-
-    // Calculate price without considering breakfast
-    let price = hargaKamar * val;
-
-    // Check if duration is more than 3 days to apply discount
-    if (val > discDurAtLeastMoreThan) {
-      const disc = price * discountRate;
-      price = price - disc;
-      form.setValue("diskon", disc); // Update diskon value in form state
-    } else {
-      // Set diskon to the previous value if duration is 3 days or less
-      form.setValue("diskon", currentDiskon);
-    }
-
-    // Check for breakfast
-    const isBreakfast = form.getValues("isBreakfast");
-    if (isBreakfast) {
-      price += breakfastPrice;
-    }
-
-    // Update totalHarga in form state
-    setTotalHarga(price);
-    form.setValue("totalHarga", price);
-  };
-
+ 
   async function onSubmit(values: z.infer<typeof UserSchema>) {
     try {
       await editData({ id: id, body: values });
@@ -236,7 +129,7 @@ const EditForm = ({ id }: editProps) => {
             <FormItem>
               <FormLabel className="">Name Pemesan</FormLabel>
               <FormControl>
-                <Input placeholder="Name" {...field} className="w-full" />
+                <Input placeholder="Name" {...field} className="w-full" disabled/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -255,11 +148,11 @@ const EditForm = ({ id }: editProps) => {
                   value={jenisKelamin}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Laki-laki" id="jenis-laki" />
+                    <RadioGroupItem value="Laki-laki" id="jenis-laki" disabled/>
                     <Label htmlFor="jenis-laki">Laki-laki</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Perempuan" id="jenis-perempuan" />
+                    <RadioGroupItem value="Perempuan" id="jenis-perempuan" disabled/>
                     <Label htmlFor="jenis-perempuan">Perempuan</Label>
                   </div>
                 </RadioGroup>
@@ -275,7 +168,7 @@ const EditForm = ({ id }: editProps) => {
             <FormItem>
               <FormLabel>Nomor Identitas</FormLabel>
               <FormControl>
-                <Input placeholder="Nomor Identitas" {...field} />
+                <Input placeholder="Nomor Identitas" {...field} disabled/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -289,10 +182,10 @@ const EditForm = ({ id }: editProps) => {
               <FormLabel>Tipe Kamar</FormLabel>
               <Select
                 onValueChange={(value) => {
-                  handleKamarSelect(value);
                   field.onChange(value);
                 }}
                 value={field.value}
+                disabled
               >
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -357,6 +250,7 @@ const EditForm = ({ id }: editProps) => {
                         form.setValue("tanggalPesan", date as Date);
                       }}
                       initialFocus
+                      disabled
                     />
                   </PopoverContent>
                 </Popover>
@@ -376,11 +270,9 @@ const EditForm = ({ id }: editProps) => {
                   <Input
                     type="number"
                     {...field}
-                    onChange={(e) => {
-                      handleDurationChange(e);
-                    }}
                     value={duration}
                     className="w-full"
+                    disabled
                   />
                 </FormControl>
                 <FormLabel>Hari</FormLabel>
@@ -401,8 +293,8 @@ const EditForm = ({ id }: editProps) => {
                     checked={field.value}
                     onCheckedChange={(e) => {
                       field.onChange(e);
-                      handleBreakfastChange(e);
                     }}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -424,9 +316,7 @@ const EditForm = ({ id }: editProps) => {
           )}
         />
         <div className="flex mx-auto items-center text-center gap-x-8">
-        <Button type="button" onClick={handleTotalBayar}>Hitung Total Bayar</Button>
-          <Button type="submit">Edit</Button>
-          <Button type="button" onClick={() => router.back()}>Back</Button>
+          <Button type="button" onClick={() => router.back()}>Cancel</Button>
         </div>
 
       </form>
@@ -435,4 +325,4 @@ const EditForm = ({ id }: editProps) => {
   );
 };
 
-export default EditForm;
+export default ViewSheet;

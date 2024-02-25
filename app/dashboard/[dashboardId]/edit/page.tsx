@@ -1,11 +1,11 @@
 import Header from "@/components/header";
+import EditSheet from "../../components/edit-sheet";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ViewSheet from "../components/view-sheet";
 
 interface DashboardIdProps {
   params: {
@@ -22,11 +22,11 @@ const DashboardId = ({ params }: DashboardIdProps) => {
           <Card className="w-full">
             <CardHeader className="space-y-2">
               <CardTitle className="text-2xl text-center">
-                Data Customer
+                Edit Data
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ViewSheet id={params.dashboardId}  />
+              <EditSheet id={params.dashboardId}  />
             </CardContent>
           </Card>
         </div>

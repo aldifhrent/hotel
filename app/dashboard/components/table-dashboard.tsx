@@ -19,7 +19,7 @@ const TableDashboard = ({ user, handleDelete }: UserProps) => {
         <TableRow>
           <TableHead className="text-center">No</TableHead>
           <TableHead className="text-center">Nomor KTP</TableHead>
-          <TableHead className="text-center">Name</TableHead>
+          <TableHead className="text-center">Nama</TableHead>
           <TableHead className="text-center">Jenis Kelamin</TableHead>
           <TableHead className="text-center">Tipe Kamar</TableHead>
           <TableHead className="text-center">Harga</TableHead>
@@ -39,7 +39,9 @@ const TableDashboard = ({ user, handleDelete }: UserProps) => {
           >
             <TableCell className="font-medium">{index + 1}</TableCell>
             <TableCell className="font-medium">{value.nomorKtp}</TableCell>
-            <TableCell className="font-medium">{value.nama}</TableCell>
+            <TableCell className="font-medium">
+              <Link href={`/dashboard/${value.id}`}>{value.nama}</Link>
+            </TableCell>
             <TableCell className="font-medium">{value.jenisKelamin}</TableCell>
             <TableCell className="font-medium">{value.tipeKamar}</TableCell>
             <TableCell className="font-medium">
@@ -59,7 +61,7 @@ const TableDashboard = ({ user, handleDelete }: UserProps) => {
               {value.totalHarga.toString()}
             </TableCell>
             <TableCell className="flex gap-x-2">
-              <Link href={`/dashboard/${value.id}`}>
+              <Link href={`/dashboard/${value.id}/edit`}>
                 <Button>Edit</Button>
               </Link>
               <Button
