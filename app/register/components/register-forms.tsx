@@ -64,7 +64,6 @@ const SignUpForm = () => {
   });
   const { mutateAsync: createCustomer } = useCreateUser();
   const route = useRouter();
-  
 
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
@@ -92,7 +91,7 @@ const SignUpForm = () => {
     form.setValue("totalHarga", price);
   };
 
-  // Variable for breakfast, discount 10% and discount if more than 3 days 
+  // Variable for breakfast, discount 10% and discount if more than 3 days
   const breakfastPrice = 80000;
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
@@ -132,7 +131,6 @@ const SignUpForm = () => {
     }
   };
 
-
   const [duration, setDuration] = useState<number>(0);
   // function for duration
 
@@ -168,12 +166,12 @@ const SignUpForm = () => {
   async function onSubmit(values: z.infer<typeof UserSchema>) {
     try {
       await createCustomer(values);
-      
+
       setTimeout(() => {
         toast.success("Sucessfully created");
 
-        route.push('/dashboard')
-      }, 5000)
+        route.push("/dashboard");
+      }, 5000);
     } catch (error) {
       console.log(error);
     }
@@ -301,7 +299,11 @@ const SignUpForm = () => {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={setDate}
+                      onSelect={(date) => {
+                        setDate(date);
+                        // Update the form value for tanggalPesan
+                        form.setValue("tanggalPesan", date as Date);
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
