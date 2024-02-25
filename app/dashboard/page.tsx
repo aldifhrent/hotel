@@ -31,11 +31,10 @@ const DashboardPage = () => {
         <h1 className="mt-6 text-center text-2xl font-bold">
           Dashboard Customer
         </h1>
+        
         <div className="ml-4 mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          //Card Dashboard for data user
           <CardDashboard data={userTotal} title={"Data User"} />
         </div>
-        // Table Dashboard for list data user
         <TableDashboard user={user} handleDelete={handleDelete} />
       </div>
     </>
