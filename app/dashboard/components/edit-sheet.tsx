@@ -47,6 +47,7 @@ interface editProps {
 const EditForm = ({ id }: editProps) => {
   const { mutate: editData } = useEdit();
   const router = useRouter();
+  // Fetch data by id
   async function fetchDataId(id: string) {
     try {
       const response = await axiosInstance.get(`/api/customers/${id}`);
@@ -68,7 +69,6 @@ const EditForm = ({ id }: editProps) => {
       setJenisKelamin(response.data.jenisKelamin);
     } catch (error) {
       toast.error("Error Fetching");
-      console.log(error);
     }
   }
   useEffect(() => {
@@ -94,7 +94,7 @@ const EditForm = ({ id }: editProps) => {
       totalHarga: 0,
     },
   });
-
+  // Total Bayar
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
     const selected = tipeKamarData.find((item) => {
@@ -352,8 +352,6 @@ const EditForm = ({ id }: editProps) => {
                       mode="single"
                       selected={date}
                       onSelect={(date) => {
-                        // Update the date state directly
-                        console.log("Selected Date:", date);
                         setDate(date);
                         // Update the form value for tanggalPesan
                         form.setValue("tanggalPesan", date as Date);

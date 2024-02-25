@@ -1,6 +1,7 @@
 import db from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
+// Api for get data customer by id
 export async function GET(
   req: Request,
   { params }: { params: { customersId: string } }
@@ -21,6 +22,7 @@ export async function GET(
   }
 }
 
+// API for modified customer data by id
 export const PATCH = async (
   req: Request,
   { params }: { params: { customersId: string } }
@@ -64,6 +66,7 @@ export const PATCH = async (
   return NextResponse.json(beasiswa);
 };
 
+// API for delete customer data by id
 export const DELETE = async (
   res: Request,
   { params }: { params: { customersId: string } }
