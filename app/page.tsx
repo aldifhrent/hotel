@@ -1,4 +1,5 @@
 
+import { Footer } from "@/components/footer";
 import Header from "@/components/header";
 import Hero from "@/components/hero";
 import Hotel from "@/components/hotel";
@@ -10,6 +11,7 @@ export default function Home() {
       <Header/>
       <Hero/>
       <Hotel/>
+      <Footer/>
     </main>
   );
 }
