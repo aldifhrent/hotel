@@ -64,6 +64,8 @@ const SignUpForm = () => {
   });
   const { mutateAsync: createCustomer } = useCreateUser();
   const route = useRouter();
+  
+
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
     const selected = tipeKamarData.find((item) => {
@@ -90,6 +92,7 @@ const SignUpForm = () => {
     form.setValue("totalHarga", price);
   };
 
+  // Variable for breakfast, discount 10% and discount if more than 3 days 
   const breakfastPrice = 80000;
   const discountRate = 0.1; // 10 percentage
   const discDurAtLeastMoreThan = 3; // in days
@@ -129,10 +132,10 @@ const SignUpForm = () => {
     }
   };
 
-  //Handles the change in duration input, calculates the price, applies discount if applicable,
-  //and updates the total price including breakfast if selected.
 
   const [duration, setDuration] = useState<number>(0);
+  // function for duration
+
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
     var targetValue = parseInt(target.value || "0", 10); // Parse value as an integer

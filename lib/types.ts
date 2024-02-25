@@ -23,3 +23,8 @@ export interface Users {
   isBreakfast: boolean;
   totalHarga: number;
 }
+
+export interface CardProps {
+  data: string;
+  title: string;
+}

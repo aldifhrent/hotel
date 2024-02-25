@@ -14,10 +14,11 @@ import { User } from "lucide-react";
 
 const DashboardPage = () => {
   const route = useRouter();
-  const { data: user } = useFetch();
-  const { data: userTotal } = useTotalUser();
+  const { data: user } = useFetch(); // Get Data User
+  const { data: userTotal } = useTotalUser(); // Get Total User
   console.log(userTotal);
-  const { mutate: deleteBeasiswa } = useDelete();
+  const { mutate: deleteBeasiswa } = useDelete(); // Delete User
+  // Function for delete data
   const handleDelete = async (id: string) => {
     try {
       deleteBeasiswa(id);
@@ -35,11 +36,7 @@ const DashboardPage = () => {
           Dashboard Customer
         </h1>
         <div className="ml-4 mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <CardDashboard
-            data={userTotal}
-            title={"Data User"}
-            icon={<User size={24} />}
-          />
+          <CardDashboard data={userTotal} title={"Data User"} />
         </div>
         <TableDashboard user={user} handleDelete={handleDelete} />
       </div>

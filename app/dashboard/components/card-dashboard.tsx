@@ -1,13 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Icon } from "next/dist/lib/metadata/types/metadata-types";
-import { ReactNode } from "react";
+import { CardProps } from "@/lib/types";
 
-interface CardProps {
-  data: string;
-  title: string;
-  icon: React.ReactElement;
-}
-const CardDashboard = ({ data, title, icon }: CardProps) => {
+const CardDashboard = ({ data, title }: CardProps) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-x-4 justify-center text-center">

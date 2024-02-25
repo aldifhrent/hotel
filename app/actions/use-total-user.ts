@@ -3,7 +3,7 @@
 import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
-// Function for fetching data from API
+// Function for fetching data from API and count data
 export const useTotalUser = () => {
   return useQuery({
     queryFn: async () => {
