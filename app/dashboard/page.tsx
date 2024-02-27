@@ -12,7 +12,6 @@ const DashboardPage = () => {
   const route = useRouter();
   const { data: user } = useFetch(); // Get Data User
   const { data: userTotal } = useTotalUser(); // Get Total User
-  console.log(userTotal);
   const { mutate: deleteBeasiswa } = useDelete(); // Delete User
   // Function for delete data
   const handleDelete = async (id: string) => {

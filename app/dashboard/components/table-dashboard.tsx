@@ -45,20 +45,20 @@ const TableDashboard = ({ user, handleDelete }: UserProps) => {
             <TableCell className="font-medium">{value.jenisKelamin}</TableCell>
             <TableCell className="font-medium">{value.tipeKamar}</TableCell>
             <TableCell className="font-medium">
-              {value.harga.toString()}
+            Rp{value.harga.toString()}
             </TableCell>
             <TableCell className="font-medium">
               {moment(value.tanggalPesan).format("D MMMM  YYYY")}
             </TableCell>
-            <TableCell className="font-medium">{value.durasi}</TableCell>
+            <TableCell className="font-medium">{value.durasi} Hari</TableCell>
             <TableCell className="font-medium">
-              {value.diskon.toString()}
+            {value.diskon.toString() !== "0" ? "10%" : "0%"}
             </TableCell>
             <TableCell className="font-medium w-fit">
-              {value.isBreakfast ? 80000 : "No Include"}
+            Rp{value.isBreakfast ? 80000 : "No Include"}
             </TableCell>
             <TableCell className="font-medium w-fit">
-              {value.totalHarga.toString()}
+             Rp{value.totalHarga.toString()}
             </TableCell>
             <TableCell className="flex gap-x-2">
               <Link href={`/dashboard/${value.id}/edit`}>
