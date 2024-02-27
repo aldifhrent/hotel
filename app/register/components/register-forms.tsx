@@ -170,7 +170,7 @@ const SignUpForm = () => {
       setTimeout(() => {
         toast.success("Sucessfully created");
 
-        route.push("/dashboard");
+        route.push(`/dashboard`);
       }, 5000);
     } catch (error) {
       console.log(error);

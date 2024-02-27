@@ -7,6 +7,7 @@ import TableDashboard from "./components/table-dashboard";
 import { useDelete, useTotalUser } from "../actions";
 import Header from "@/components/header";
 import CardDashboard from "./components/card-dashboard";
+import Chart from "./components/chart";
 
 const DashboardPage = () => {
   const route = useRouter();
@@ -30,9 +31,9 @@ const DashboardPage = () => {
         <h1 className="mt-6 text-center text-2xl font-bold">
           Dashboard Customer
         </h1>
-        
+
         <div className="ml-4 mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <CardDashboard data={userTotal} title={"Data User"} />
+          <Chart />
         </div>
         <TableDashboard user={user} handleDelete={handleDelete} />
       </div>
