@@ -11,7 +11,7 @@ import {
 import { axiosInstance } from "@/lib/axios";
 
 const Chart = () => {
-  // Ambil data dari API menggunakan useQuery
+  // Ambil data dari API
   const {
     data: customersData,
     isLoading,
