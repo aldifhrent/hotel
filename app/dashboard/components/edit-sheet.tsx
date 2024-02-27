@@ -216,7 +216,10 @@ const EditForm = ({ id }: editProps) => {
     setTotalHarga(price);
     form.setValue("totalHarga", price);
   };
-
+  const handleGenderChange = (value: string) => {
+    setJenisKelamin(value); // Update jenisKelamin state
+    form.setValue("jenisKelamin", value); // Update jenisKelamin value in form state
+  };
   async function onSubmit(values: z.infer<typeof UserSchema>) {
     try {
       await editData({ id: id, body: values });
@@ -250,7 +253,7 @@ const EditForm = ({ id }: editProps) => {
               <FormLabel>Jenis Kelamin</FormLabel>
               <FormControl>
                 <RadioGroup
-                  onValueChange={field.onChange}
+                  onValueChange={handleGenderChange}
                   defaultValue={field.value}
                   value={jenisKelamin}
                 >

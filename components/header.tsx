@@ -17,11 +17,6 @@ const Header = () => {
       label: "Home",
       active: pathname === `/`,
     },
-    {
-      href: `/dashboard`,
-      label: "Dashboard",
-      active: pathname === `/dashboard`,
-    },
   ];
   const handleNav = () => {
     setNav(!nav);

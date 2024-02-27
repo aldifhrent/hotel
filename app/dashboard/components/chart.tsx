@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Bar,
   BarChart,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -77,7 +78,8 @@ const Chart = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Bar dataKey="total" fill="currentColor" />
-          <Tooltip wrapperStyle={{ width: 100, backgroundColor: "#ccc" }} />
+          <Tooltip/>
+          <Legend/>
         </BarChart>
       </ResponsiveContainer>
     </div>
