@@ -10,26 +10,11 @@ import {
   YAxis,
 } from "recharts";
 import { axiosInstance } from "@/lib/axios";
+import { useFetch } from "@/app/actions";
 
 const Chart = () => {
   // Ambil data dari API
-  const {
-    data: customersData,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["customers"],
-    queryFn: async () => {
-      try {
-        const response = await axiosInstance.get("/api/customers");
-
-        return response.data;
-      } catch (error) {
-        throw new Error("Failed to fetch customer data");
-      }
-    },
-    refetchInterval: 3000,
-  });
+  const { data: customersData, isLoading, isError } = useFetch();
 
   // Fungsi untuk menghitung jumlah kamar berdasarkan jenisnya
   const calculateRoomCounts = (data: any) => {
@@ -78,8 +63,8 @@ const Chart = () => {
           <XAxis dataKey="name" />
           <YAxis />
           <Bar dataKey="total" fill="currentColor" />
-          <Tooltip/>
-          <Legend/>
+          <Tooltip />
+          <Legend />
         </BarChart>
       </ResponsiveContainer>
     </div>

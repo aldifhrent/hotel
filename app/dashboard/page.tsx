@@ -35,7 +35,6 @@ const DashboardPage = () => {
 
         <div className="ml-4 mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Chart />
-          <ChartPie/>
         </div>
         <TableDashboard user={user} handleDelete={handleDelete} />
       </div>
