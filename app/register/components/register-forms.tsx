@@ -44,9 +44,9 @@ import { z } from "zod";
 const SignUpForm = () => {
   const [date, setDate] = useState<Date>();
 
-  const [hargaKamar, setHargaKamar] = useState(0);
-  const [totalHarga, setTotalHarga] = useState(0);
-
+  const [hargaKamar, setHargaKamar] = useState(0); // variable set dan get pada harga kamar
+  const [totalHarga, setTotalHarga] = useState(0);// variable set dan get pada total harga
+  // default value 
   const form = useForm({
     resolver: zodResolver(UserSchema),
     defaultValues: {
@@ -62,8 +62,8 @@ const SignUpForm = () => {
       totalHarga: 0,
     },
   });
-  const { mutateAsync: createCustomer } = useCreateUser();
-  const route = useRouter();
+  const { mutateAsync: createCustomer } = useCreateUser(); // hooks untuk membuat data user
+  const route = useRouter(); // router method
 
   const handleTotalBayar = () => {
     const tipeKamar = form.getValues("tipeKamar");
@@ -120,7 +120,6 @@ const SignUpForm = () => {
   };
 
   // function that handles the change in breakfast status.
-
   const handleBreakfastChange = (status: CheckedState) => {
     if (status) {
       setTotalHarga(totalHarga + breakfastPrice);
@@ -133,7 +132,6 @@ const SignUpForm = () => {
 
   const [duration, setDuration] = useState<number>(0);
   // function for duration
-
   const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
     var target = e.target;
     var targetValue = parseInt(target.value || "0", 10); // Parse value as an integer

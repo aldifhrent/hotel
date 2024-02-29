@@ -17,10 +17,12 @@ const Header = () => {
       label: "Home",
       active: pathname === `/`,
     },
+    {
+      href: `/dashboard`,
+      label: "Dashbaord",
+      active: pathname === `/dashboard`,
+    },
   ];
-  const handleNav = () => {
-    setNav(!nav);
-  };
   return (
     <header className="p-6 bg-slate-300">
       <div className="flex justify-between text-center items-center">
