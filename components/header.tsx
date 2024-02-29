@@ -19,7 +19,7 @@ const Header = () => {
     },
     {
       href: `/dashboard`,
-      label: "Dashbaord",
+      label: "Dashboard",
       active: pathname === `/dashboard`,
     },
   ];
@@ -27,7 +27,9 @@ const Header = () => {
     <header className="p-6 bg-slate-300">
       <div className="flex justify-between text-center items-center">
         <div className="p-2">
-          <h1 className="font-bold text-xl bg-black text-white p-1">Vahl Hotel</h1>
+          <h1 className="font-bold text-xl bg-black text-white p-1">
+            Vahl Hotel
+          </h1>
         </div>
         <nav className="hidden lg:flex gap-4 items-center text-center justify-center">
           {routes.map((route) => (
@@ -35,9 +37,7 @@ const Header = () => {
               key={route.href}
               href={route.href}
               className={
-                (cn(
-                  " text-sm font-bold transition-colors hover:text-primary"
-                ),
+                (cn(" text-sm font-bold transition-colors hover:text-primary"),
                 route.active
                   ? "text-black dark:text-white"
                   : "text-muted-foreground")
